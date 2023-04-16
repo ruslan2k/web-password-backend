@@ -1,0 +1,52 @@
+type Mutation {
+    register(email: String!, password: String!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    createItem(name: String!, value: String!): Item!
+    createSecret(name: String!, items: [ItemInput]): CreateSecretPayload!
+    createGroup(name: String!): Group!
+}
+
+type Query {
+    checkAuth: CheckAuthPayload!
+    items: [Item]
+    secrets: [Secret]
+}
+
+type AuthPayload {
+    token: String!
+}
+
+type CheckAuthPayload {
+    isAuthenticated: Boolean
+}
+
+type User {
+    id: ID!
+    email: String!
+}
+
+type Secret {
+    id: ID!
+    name: String!
+    items: [Item]
+}
+
+type CreateSecretPayload {
+    id: ID!
+}
+
+type Item {
+    id: ID!
+    name: String!
+    value: String
+}
+
+type Group {
+    id: ID!
+    name: String!
+}
+
+input ItemInput {
+    name: String!
+    value: String
+}
