@@ -1,9 +1,11 @@
-default:
-	false
+-include .ruslan.mk
 
-pull:
-	git $@
+start: node_modules
+	yarn $@
 
-push:
-	git $@
+dev: node_modules
+	yarn run $@
+
+node_modules:
+	yarn install
 
