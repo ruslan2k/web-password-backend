@@ -2,34 +2,37 @@ import jwt from 'jsonwebtoken'
 import { randomBytes } from 'crypto'
 
 import { User } from '../user/model.mongodb.js'
+import { Session } from '../session/model.js'
 import { Password } from '../password/model-mongodb.js'
-import { generateId } from '../utils.js'
+//import { generateId } from '../utils.js'
 
 import { appSecret, KEY_LENGTH } from '../config.js'
-const authSessions = {}
+//const authSessions = {}
 
 export async function register(_parent, args, _ctx) {
     const { email, password } = args
-    const user = await User.create(email, password)
+    const { id: userId } = await User.create(email, password)
     const userKey = randomBytes(KEY_LENGTH) // used to encrypt items
-    await Password.create(userKey, password, user.id)
+    await Password.create(userKey, password, userId)
+    const { id: sessionId } = await Session.create(userId, userKey)
 
-    const sessionId = generateId()
-    authSessions[sessionId] = userKey
-    const token = jwt.sign({ sessionId, userId: user.id }, appSecret)
+    //const sessionId = generateId()
+    //authSessions[sessionId] = userKey
+    const token = jwt.sign({ sessionId, userId }, appSecret)
 
     return { token }
 }
 
 export async function login(_parent, args, _ctx) {
     const { email, password } = args
-    const user = await User.login(email, password)
-    const passwordObj = await Password.findOne({ user: user.id })
+    const { id: userId } = await User.login(email, password)
+    const passwordObj = await Password.findOne({ user: userId })
     const userKey = await Password.decrypt(passwordObj, password)
 
-    const sessionId = generateId()
-    authSessions[sessionId] = userKey
-    const token = jwt.sign({ sessionId, userId: user.id }, appSecret)
+    const { id: sessionId } = await Session.create(userId, userKey)
+    //const sessionId = generateId()
+    //authSessions[sessionId] = userKey
+    const token = jwt.sign({ sessionId, userId }, appSecret)
 
     return { token }
 }
@@ -37,7 +40,8 @@ export async function login(_parent, args, _ctx) {
 export function getUserIdAndKey(token) {
     try {
         const { userId: id, sessionId } = jwt.verify(token, appSecret)
-        return { id, userKey: authSessions[sessionId] }
+        throw new Error('TODO')
+        //return { id, userKey: authSessions[sessionId] }
     } catch (ex) {
         return null
     }
