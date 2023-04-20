@@ -8,8 +8,8 @@ const generateKeyPairP = promisify(generateKeyPair)
 
 /**
  * @param {string} name
- * @param {string} userId 
- * @param {buffer} userKey
+ * @param {string} userId
+ * @param {Buffer} userKey
  */
 async function create(name, userId, userKey) {
     const { publicKey, privateKey } = await genKeyPair()

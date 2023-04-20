@@ -1,9 +1,7 @@
-import { randomBytes, scrypt } from 'crypto'
-import { promisify } from 'util'
+import { randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+import { ALGORITHM } from './config.js'
 
-const scryptP = promisify(scrypt)
-
-export function createIv(len = 32) {
+export function createIv(len = 16) {
     return randomBytes(len);
 }
 
@@ -19,11 +17,36 @@ export function generateId() {
     return `${Date.now()}${randomString()}`;
 }
 
-export async function encryptSymetric(password, salt, iv, secret) {
-    const genKey = await scryptP(password, salt, KEY_LENGTH) // used to encrypt userKey
-    const cipher = createCipheriv(ALGORITHM, genKey, iv)
-    let encryptedKey = cipher.update(userKey, null, 'base64')
-    encryptedKey += cipher.final('base64')
+//export async function encryptSymetric(password, salt, iv, secret) {
+//    const genKey = await scryptP(password, salt, KEY_LENGTH) // used to encrypt userKey
+//    const cipher = createCipheriv(ALGORITHM, genKey, iv)
+//    let encrypted = cipher.update(secret, null, 'base64')
+//    encrypted += cipher.final('base64')
+//
+//    return encrypted
+//}
 
-    return
+/**
+ * @param {Buffer} key
+ * @param {Buffer} iv
+ * @param {Buffer} secret
+ */
+export function encryptWithSymmetricKey(key, iv, secret) {
+    const cipher = createCipheriv(ALGORITHM, key, iv)
+    const encrypted = Buffer.concat([cipher.update(secret), cipher.final()])
+
+    return encrypted
 }
+
+/**
+ * @param {Buffer} key
+ * @param {Buffer} iv
+ * @param {Buffer} encrypted
+ */
+export function decryptWithSymmetricKey(key, iv, encrypted) {
+    const decipher = createDecipheriv(ALGORITHM, key, iv)
+    const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()])
+
+    return decrypted
+}
+

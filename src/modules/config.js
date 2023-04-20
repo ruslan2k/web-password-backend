@@ -14,7 +14,9 @@ if (!APP_SECRET) {
 
 export const appSecret = APP_SECRET
 export const mySite = MY_SITE
-export const ALGORITHM = 'aes-192-cbc'
-export const KEY_LENGTH = 24
+//export const ALGORITHM = 'aes-192-cbc'
+//export const KEY_LENGTH = 24
+export const ALGORITHM = 'aes-256-cbc'
+export const KEY_LENGTH = 32
 export const mongodbUri = MONGODB_URI
 
