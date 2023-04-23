@@ -2,7 +2,8 @@ import { randomBytes, createCipheriv } from 'crypto'
 import { Schema, model } from 'mongoose'
 
 import { ALGORITHM } from '../config.js'
-import { decrypt as decryptCommon } from '../cipher/index.js'
+
+//TODO: import { decrypt as decryptCommon } from '../cipher/index.js'
 
 const schema = new Schema({
     secret: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },

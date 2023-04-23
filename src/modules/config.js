@@ -9,7 +9,13 @@ const {
 } = process.env
 
 if (!APP_SECRET) {
-    throw new Error(`Env var APP_SECRET=${APP_SECRET}`)
+    throw new Error('Unknown Env var APP_SECRET')
+}
+
+export const appSecretBuf = Buffer.from(APP_SECRET, 'base64')
+
+if (appSecretBuf.length !== 32) {
+    throw new Error('APP_SECRET should be 32 bytes length, base64 encodded')
 }
 
 export const appSecret = APP_SECRET

@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose'
 import { promisify } from 'util'
 import { scrypt, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+
+import { createIv, createSalt } from '../utils.js'
 import { ALGORITHM, KEY_LENGTH } from '../config.js'
 
 const scryptP = promisify(scrypt)
@@ -25,8 +27,8 @@ const Model = model('Password', schema)
  * @param {string} userId
  */
 async function create(userKey, password, userId) {
-    const iv = randomBytes(16)
-    const salt = randomBytes(16)
+    const iv = createIv()
+    const salt = createSalt()
 
     const genKey = await scryptP(password, salt, KEY_LENGTH) // used to encrypt userKey
     const cipher = createCipheriv(ALGORITHM, genKey, iv)

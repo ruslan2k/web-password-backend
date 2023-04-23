@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { generateId } from '../utils.js'
 import { db } from '../db/service.js'
 import { ALGORITHM } from '../config.js'
-import { decrypt as decryptCommon } from '../cipher/index.js'
+//TODO: import { decrypt as decryptCommon } from '../cipher/index.js'
 
 /**
  * @param {string} name

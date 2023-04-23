@@ -1,16 +1,11 @@
 import { Schema, model } from 'mongoose'
-//import { promisify } from 'util'
 
-import { appSecret } from '../config.js'
+import { appSecretBuf } from '../config.js'
 import { createIv, encryptWithSymmetricKey } from '../utils.js'
-//const DEF_5K = 5000
-//const DEF_64 = 64
-//const pbkdf2P = promisify(pbkdf2)
 
 const schema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     iv: String,
-    //salt: String,
     encryptedUserKey: String
 }, { timestamps: true })
 
@@ -26,7 +21,7 @@ const Model = model('Session', schema)
  */
 async function create(userId, userKey) {
     const iv = createIv()
-    const encryptedUserKey = encryptWithSymmetricKey(Buffer.from(appSecret), iv, userKey)
+    const encryptedUserKey = encryptWithSymmetricKey(appSecretBuf, iv, userKey)
     const session = await Model.create({
         user: userId,
         iv: iv.toString('base64'),
