@@ -4,10 +4,8 @@ import { randomBytes } from 'crypto'
 import { User } from '../user/model.mongodb.js'
 import { Session } from '../session/model.js'
 import { Password } from '../password/model-mongodb.js'
-//import { generateId } from '../utils.js'
 
 import { appSecret, KEY_LENGTH } from '../config.js'
-//const authSessions = {}
 
 export async function register(_parent, args, _ctx) {
     const { email, password } = args
@@ -16,8 +14,6 @@ export async function register(_parent, args, _ctx) {
     await Password.create(userKey, password, userId)
     const { id: sessionId } = await Session.create(userId, userKey)
 
-    //const sessionId = generateId()
-    //authSessions[sessionId] = userKey
     const token = jwt.sign({ sessionId, userId }, appSecret)
 
     return { token }
@@ -30,8 +26,6 @@ export async function login(_parent, args, _ctx) {
     const userKey = await Password.decrypt(passwordObj, password)
 
     const { id: sessionId } = await Session.create(userId, userKey)
-    //const sessionId = generateId()
-    //authSessions[sessionId] = userKey
     const token = jwt.sign({ sessionId, userId }, appSecret)
 
     return { token }

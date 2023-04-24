@@ -13,7 +13,13 @@ schema.virtual('id').get(function() { return this._id.toString() })
 schema.set('toJSON', { virtuals: true })
 schema.set('toObject', { virtuals: true })
 
+schema.method('getUserKey', function() => {
+    throw new Error('TODO') // TODO:
+})
+
 const Model = model('Session', schema)
+
+const map1 = new Map()
 
 /**
  * @param {string} userId
@@ -28,7 +34,19 @@ async function create(userId, userKey) {
         encryptedUserKey: encryptedUserKey.toString('base64')
     })
 
-    return { id: session._id }
+    return session
+}
+
+/**
+ * @param {string} userId
+ * @param {Buffer} userKey
+ */
+async function createCached(userId, userKey) {
+    const session = await create(userId, userKey)
+    const id = session._id.toString()
+    map1.set(id, { id, createdAt: session.createdAt, userKey })
+    
+    return { id }
 }
 
 /**
@@ -38,8 +56,28 @@ function findById(id) {
     return Model.findById(id)
 }
 
+/** @param {string} id */
+async function findByIdCached(id) {
+    const cached = map1.get(id)
+    if (cached) { return cached }
+
+    const session = await Model.findById(id)
+    if (session) {
+        const retVal = {
+            id,
+            createdAt: session.createdAt,
+            userKey: session.getUserKey()
+        }
+        map1.set(id, retVal)
+
+        return retVal
+    }
+
+    return null
+}
+
 export const Session = {
-    create,
+    create: createCached,
     findById
 }
 
