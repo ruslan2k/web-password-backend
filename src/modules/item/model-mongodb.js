@@ -2,8 +2,7 @@ import { randomBytes, createCipheriv } from 'crypto'
 import { Schema, model } from 'mongoose'
 
 import { ALGORITHM } from '../config.js'
-
-//TODO: import { decrypt as decryptCommon } from '../cipher/index.js'
+import { createIv, decryptWithSymmetricKey, encryptWithSymmetricKey } from '../utils.js'
 
 const schema = new Schema({
     secret: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -26,22 +25,15 @@ const Model = model('Item', schema)
  * @param {Buffer} userKey
  */
 async function create(name, value, secretId, userKey) {
-    const iv = randomBytes(16)
+    const iv = createIv()
 
-    let cipher
-    cipher = createCipheriv(ALGORITHM, userKey, iv)
-    let encryptedName = cipher.update(name, 'utf8', 'base64')
-    encryptedName += cipher.final('base64')
-
-    cipher = createCipheriv(ALGORITHM, userKey, iv)
-    let encryptedValue = cipher.update(value, 'utf8', 'base64')
-    encryptedValue += cipher.final('base64')
+    const encryptedName = encryptWithSymmetricKey(userKey, iv, Buffer.from(name, 'utf8'))
+    const encryptedValue = encryptWithSymmetricKey(userKey, iv, Buffer.from(value, 'utf8'))
 
     return Model.create({
-        secret: secretId,
         iv: iv.toString('base64'),
-        encryptedName,
-        encryptedValue
+        encryptedName: encryptedName.toString('base64'),
+        encryptedValue: encryptedValue.toString('base64'),
     })
 }
 
@@ -62,8 +54,8 @@ export function find(obj) {
 function decrypt(obj, userKey) {
     const { iv: ivStr, encryptedName, encryptedValue } = obj
     const iv = Buffer.from(ivStr, 'base64')
-    const name = decryptCommon(iv, userKey, encryptedName)
-    const value = decryptCommon(iv, userKey, encryptedValue)
+    const name = decryptWithSymmetricKey(userKey, iv, Buffer.from(encryptedName, 'base64'))
+    const value = decryptWithSymmetricKey(userKey, iv, Buffer.from(encryptedValue, 'base64'))
 
     return { name, value }
 }
