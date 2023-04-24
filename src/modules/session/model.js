@@ -1,7 +1,11 @@
 import { Schema, model } from 'mongoose'
 
 import { appSecretBuf } from '../config.js'
-import { createIv, encryptWithSymmetricKey } from '../utils.js'
+import {
+    createIv,
+    encryptWithSymmetricKey,
+    decryptWithSymmetricKey
+} from '../utils.js'
 
 const schema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -13,8 +17,12 @@ schema.virtual('id').get(function() { return this._id.toString() })
 schema.set('toJSON', { virtuals: true })
 schema.set('toObject', { virtuals: true })
 
-schema.method('getUserKey', function() => {
-    throw new Error('TODO') // TODO:
+schema.method('getUserKey', function() {
+    return decryptWithSymmetricKey(
+        appSecretBuf,
+        Buffer.from(this.iv, 'base64'),
+        Buffer.from(this.encryptedUserKey, 'base64')
+    )
 })
 
 const Model = model('Session', schema)
@@ -78,6 +86,6 @@ async function findByIdCached(id) {
 
 export const Session = {
     create: createCached,
-    findById
+    findById: findByIdCached
 }
 
