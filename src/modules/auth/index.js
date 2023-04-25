@@ -30,11 +30,16 @@ export async function login(_parent, args, _ctx) {
     return { token }
 }
 
-export function getUserIdAndKey(token) {
+export async function getUserIdAndKey(token) {
     try {
         const { userId: id, sessionId } = jwt.verify(token, appSecret)
-        throw new Error('TODO')
-        //return { id, userKey: authSessions[sessionId] }
+
+        const session = await Session.findById(sessionId)
+        if (session) {
+            return { id, userKey: session.userKey }
+        }
+
+        return { id, userKey: null }
     } catch (ex) {
         return null
     }

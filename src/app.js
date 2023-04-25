@@ -31,7 +31,7 @@ export async function contextFunc({ req }) {
         return { user: null }
     }
 
-    const user = getUserIdAndKey(authorization.split(' ')[1])
+    const user = await getUserIdAndKey(authorization.split(' ')[1])
 
     return { user }
 }

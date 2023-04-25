@@ -27,17 +27,20 @@ export async function addSecret(userId, userKey, name, items) {
 export async function getSecretsByUserId(userId, userKey) {
     const secrets = await Secret.find({ user: userId })
 
-    const items = await Item.find({ secret: secrets.map(({ id }) => id) })
+    const items = await Item.find({ secret: secrets.map(({ id }) => id) }).populate('secret')
 
+    //console.log('items', items)
+
+    //TODO:
     throw new Error('TODO')
 
-    return items
-        .map((item) => {
-            const { name, secret } = Item.decrypt(item, userKey)
+    //return items
+    //    .map((item) => {
+    //        const { name, secret } = Item.decrypt(item, userKey)
 
-            return { ...item, name, secret }
-        })
-        .map(({ id, name, secret }) => ({ id, name, secret }))
+    //        return { ...item, name, secret }
+    //    })
+    //    .map(({ id, name, secret }) => ({ id, name, secret }))
 }
 
 
