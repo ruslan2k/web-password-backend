@@ -29,6 +29,15 @@ export async function getSecretsByUserId(userId, userKey) {
 
     const items = await Item.find({ secret: secrets.map(({ id }) => id) }).populate('secret')
 
+    return secrets.map((secret) => {
+        const { name } = secret.decrypt(userKey)
+        return {
+            id: secret.id,
+            name,
+            items: []    //TODO:
+        }
+    })
+    
     //console.log('items', items)
 
     //TODO:

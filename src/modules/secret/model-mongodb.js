@@ -3,6 +3,7 @@ import { randomBytes, createCipheriv } from 'crypto'
 
 import { Item } from '../item/model-mongodb.js'
 import { ALGORITHM } from '../config.js'
+import { decryptWithSymmetricKey } from '../utils.js'
 
 const schema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -10,10 +11,17 @@ const schema = new Schema({
     encryptedName: String
 }, { timestamps: true })
 
-schema.virtual('id').get(function () { return this._id.toString() })
-schema.virtual('userId').get(function () { return this.user._id.toString() })
+schema.virtual('id').get(function() { return this._id.toString() })
+schema.virtual('userId').get(function() { return this.user._id.toString() })
 schema.set('toJSON', { virtuals: true })
 schema.set('toObject', { virtuals: true })
+schema.method('decrypt', function(userKey) {
+    const iv = Buffer.from(this.iv, 'base64')
+    const encryptedName = Buffer.from(this.encryptedName, 'base64')
+    const name = decryptWithSymmetricKey(userKey, iv, encryptedName).toString()
+
+    return { name }
+})
 
 const Model = model('Secret', schema)
 

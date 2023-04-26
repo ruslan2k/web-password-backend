@@ -1,7 +1,5 @@
-import { randomBytes, createCipheriv } from 'crypto'
 import { Schema, model } from 'mongoose'
 
-import { ALGORITHM } from '../config.js'
 import { createIv, decryptWithSymmetricKey, encryptWithSymmetricKey } from '../utils.js'
 
 const schema = new Schema({
