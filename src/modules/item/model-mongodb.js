@@ -9,10 +9,18 @@ const schema = new Schema({
     encryptedValue: String,
 }, { timestamps: true })
 
-schema.virtual('id').get(function () { return this._id.toString() })
-schema.virtual('secretId').get(function () { return this.secret._id.toString() })
+schema.virtual('id').get(function() { return this._id.toString() })
+schema.virtual('secretId').get(function() { return this.secret._id.toString() })
 schema.set('toJSON', { virtuals: true })
 schema.set('toObject', { virtuals: true })
+schema.method('decrypt', function(userKey) {
+    const iv = Buffer.from(this.iv, 'base64')
+
+    const name = decryptWithSymmetricKey(userKey, iv, Buffer.from(this.encryptedName, 'base64'))
+    const value = decryptWithSymmetricKey(userKey, iv, Buffer.from(this.encryptedValue, 'base64'))
+
+    return { name, value }
+})
 
 const Model = model('Item', schema)
 
@@ -50,6 +58,7 @@ export function find(obj) {
  * @param {string} obj.encryptedValue
  * @param {Buffer} userKey
  */
+/*
 function decrypt(obj, userKey) {
     const { iv: ivStr, encryptedName, encryptedValue } = obj
     const iv = Buffer.from(ivStr, 'base64')
@@ -58,10 +67,11 @@ function decrypt(obj, userKey) {
 
     return { name, value }
 }
+*/
 
 export const Item = {
     create,
     find,
-    decrypt
+    //decrypt
 }
 

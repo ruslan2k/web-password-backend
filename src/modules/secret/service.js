@@ -26,30 +26,23 @@ export async function addSecret(userId, userKey, name, items) {
  */
 export async function getSecretsByUserId(userId, userKey) {
     const secrets = await Secret.find({ user: userId })
+    const secretsObj = secrets.map((secret) => {
+        const { name } = secret.decrypt(userKey)
+        return { id: secret.id, name, items: [] }
+    })
+        .reduce((accum, current) => {
+            accum[current.id] = current
+            return accum
+        }, {})
 
     const items = await Item.find({ secret: secrets.map(({ id }) => id) }).populate('secret')
 
-    return secrets.map((secret) => {
-        const { name } = secret.decrypt(userKey)
-        return {
-            id: secret.id,
-            name,
-            items: []    //TODO:
+    items.forEach((item) => {
+        const { name, value } = item.decrypt(userKey)
+        if (item.secret.id in secretsObj) {
+            secretsObj[item.secret.id].items.push({ id: item.id, name: name.toString(), value: value.toString() })
         }
     })
-    
-    //console.log('items', items)
 
-    //TODO:
-    throw new Error('TODO')
-
-    //return items
-    //    .map((item) => {
-    //        const { name, secret } = Item.decrypt(item, userKey)
-
-    //        return { ...item, name, secret }
-    //    })
-    //    .map(({ id, name, secret }) => ({ id, name, secret }))
+    return Object.values(secretsObj)
 }
-
-
