@@ -1,4 +1,4 @@
-# Web Password Graphql Javascript
+# Web Password Storage
 
 Simple Bitwarden alternative
 
