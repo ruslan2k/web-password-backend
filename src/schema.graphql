@@ -1,14 +1,15 @@
 type Mutation {
     register(email: String!, password: String!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
-    createItem(name: String!, value: String!): Item!
+    #createItem(name: String!, value: String!): Item!
+    #updateItem(id: String!, name: String!, value: String!): Item!
     createSecret(name: String!, items: [ItemInput]): CreateSecretPayload!
     createGroup(name: String!): Group!
 }
 
 type Query {
     checkAuth: CheckAuthPayload!
-    items: [Item]
+    #items: [Item]
     secrets: [Secret]
 }
 
