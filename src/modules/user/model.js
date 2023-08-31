@@ -3,6 +3,8 @@ import { pbkdf2, randomBytes } from 'crypto'
 import { db } from '../db/service.js'
 import { generateId } from '../utils.js'
 
+import { User } from '../../entities/user.js'
+
 const DEF_5K = 5000
 const DEF_64 = 64
 const pbkdf2P = promisify(pbkdf2)

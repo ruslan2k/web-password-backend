@@ -6,13 +6,15 @@ import morgan from 'morgan'
 
 import { server, contextFunc } from './app.js'
 import { mySite } from './modules/config.js'
-import { init as initDb } from './modules/db/mongodb.js'
+import { User } from './entities/user.js'
+// import { init as initDb } from './modules/db/mongodb.js'
+import { init as initDb } from './modules/db/sql.js'
 
 const PORT = 4000
 const app = express()
 
 async function main() {
-    await initDb().then(() => console.log('Successfuly connect to MongoDB'))
+    await initDb().then(() => console.log('Successfuly connect to DB'))
     await server.start()
     app.use(morgan('combined'))
     app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server, { context: contextFunc }))
