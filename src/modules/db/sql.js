@@ -8,9 +8,9 @@ export const sequelize = new Sequelize(sqlDbUri, {
 
 export async function init() {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.')
+    console.log("Connection has been established successfully.")
 
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.log("All models were synchronized successfully.");
 }
 

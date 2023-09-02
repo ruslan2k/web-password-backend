@@ -6,7 +6,8 @@ import morgan from 'morgan'
 
 import { server, contextFunc } from './app.js'
 import { mySite } from './modules/config.js'
-import { User } from './entities/user.js'
+import { Model as User } from './entities/user.js'
+import { Model as Session } from './entities/session.js'
 // import { init as initDb } from './modules/db/mongodb.js'
 import { init as initDb } from './modules/db/sql.js'
 

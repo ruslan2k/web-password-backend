@@ -1,10 +1,12 @@
-import jwt from 'jsonwebtoken'
-import { randomBytes } from 'crypto'
+import jwt from "jsonwebtoken"
+import { randomBytes } from "crypto"
 
-import { User } from '../user/model.mongodb.js'
-import { Session } from '../session/model.js'
-import { Password } from '../password/model-mongodb.js'
-import { appSecret, KEY_LENGTH } from '../config.js'
+
+// import { User } from "../user/model.mongodb.js"
+import { Model as User } from "../../entities/user.js"
+import { Session } from "../session/model.js"
+import { Password } from "../password/model-mongodb.js"
+import { appSecret, KEY_LENGTH } from "../config.js"
 
 export async function register(_parent, args, _ctx) {
     const { email, password } = args
