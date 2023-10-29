@@ -2,7 +2,6 @@ import { promisify } from 'util'
 import _ from 'lodash'
 import { scrypt, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import { generateId } from '../utils.js'
-import { db } from '../db/service.js'
 import { ALGORITHM, KEY_LENGTH } from '../config.js'
 
 const scryptP = promisify(scrypt)
@@ -57,7 +56,7 @@ async function findOne(obj) {
     return _.find(db.data.passwords, obj)
 }
 
-export const Password = {
+export const Model = {
     create,
     decrypt,
     findOne
