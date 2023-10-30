@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { ApolloServer } from '@apollo/server'
-import './modules/db/service.js'
+
 import { register, login, checkAuth, getUserIdAndKey } from './modules/auth/index.js'
 import { createSecret, getSecrets } from './modules/secret/router.js'
 

@@ -1,6 +1,6 @@
 import { promisify } from 'util'
 import { pbkdf2, randomBytes } from 'crypto'
-import { generateId } from '../utils.js'
+// import { generateId } from '../utils.js'
 
 import { User } from '../../entities/user.js'
 
@@ -20,21 +20,19 @@ async function create(email, password) {
     await validateCreate({ email, password })
     const salt = randomBytes(16).toString('hex')
     const derivedKey = await pbkdf2P(password, salt, DEF_5K, DEF_64, 'sha512')
-    const user = {
-        id: generateId(),
+    const userObj = {
         email,
         salt,
         passwordHash: derivedKey.toString('hex')
     }
-    
-    db.data.users.push(user)
-    await db.write();
+
+    const user = await User.create(userObj)
 
     return { id: user.id, email };
 }
 
 async function login(email, password) {
-    const user = db.data.users.find((user) => user.email === email)
+    const user = await User.findOne({ where: { email } })
     if (!user) {
         throw new Error('Email or password mismatch')
     }

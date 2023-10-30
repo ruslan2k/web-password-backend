@@ -1,8 +1,8 @@
 import { promisify } from 'util'
-import _ from 'lodash'
 import { scrypt, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
-import { generateId } from '../utils.js'
+
 import { ALGORITHM, KEY_LENGTH } from '../config.js'
+import { Password } from '../../entities/password.js'
 
 const scryptP = promisify(scrypt)
 
@@ -11,7 +11,7 @@ const scryptP = promisify(scrypt)
  * @param {string} password
  * @param {string} userId
  */
-async function create(userKey, password, userId) {
+async function create(userKey, password, user) {
     const iv = randomBytes(16)
     const salt = randomBytes(16)
 
@@ -21,15 +21,14 @@ async function create(userKey, password, userId) {
     encryptedKey += cipher.final('base64')
 
     const passwordObj = {
-        id: generateId(),
-        userId,
+        // userId,
+        userId: user.id,
         salt: salt.toString('base64'),
         iv: iv.toString('base64'),
         encryptedKey
     }
 
-    db.data.passwords.push(passwordObj)
-    await db.write()
+    await Password.create(passwordObj)
 
     return passwordObj
 }
@@ -52,8 +51,8 @@ async function decrypt(passwordObj, openPassword) {
     return Buffer.from(decrypted, 'base64')
 }
 
-async function findOne(obj) {
-    return _.find(db.data.passwords, obj)
+function findOne(obj) {
+    return Password.findOne({ where: obj })
 }
 
 export const Model = {

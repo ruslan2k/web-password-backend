@@ -15,4 +15,4 @@ For commercial use - please contact the author: https://jkl.pw/2
 - [ ] Moved models to SQL ORM
   - [x] User
   - [x] Session
-  - [ ] Password
+  - [x] Password

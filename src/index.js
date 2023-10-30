@@ -5,9 +5,8 @@ import express from 'express'
 import morgan from 'morgan'
 
 import { server, contextFunc } from './app.js'
-import { mySite } from './modules/config.js'
-import { User } from './entities/user.js'
-// import { init as initDb } from './modules/db/mongodb.js'
+import { mySite, NODE_ENV } from './modules/config.js'
+
 import { init as initDb } from './modules/db/sql.js'
 
 const PORT = 4000
@@ -19,7 +18,9 @@ async function main() {
     app.use(morgan('combined'))
     app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server, { context: contextFunc }))
     app.use(express.static('../frontend/dist'))
-    app.use((_req, res) => res.redirect(mySite))
+    if (NODE_ENV !== 'dev') {
+        app.use((_req, res) => res.redirect(mySite))
+    }
 
     app.listen(PORT, () => {
         console.log(`Example app listening on port ${PORT}`)

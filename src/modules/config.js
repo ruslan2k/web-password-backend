@@ -6,7 +6,7 @@ const {
     APP_SECRET,
     MY_SITE,
     MONGODB_URI,
-    SQL_DB_URI
+    SQL_DB_URI,
 } = process.env
 
 if (!APP_SECRET) {
@@ -29,4 +29,4 @@ export const KEY_LENGTH = 32
 
 export const mongodbUri = MONGODB_URI
 export const sqlDbUri = SQL_DB_URI
-
+export const NODE_ENV = process.env.NODE_ENV

@@ -3,7 +3,7 @@ import { randomBytes } from 'crypto'
 
 import { Model as User } from '../user/model.js'
 import { Model as Session } from '../session/model.js'
-import { Password } from '../password/model.js'
+import { Model as Password } from '../password/model.js'
 import { appSecret, KEY_LENGTH } from '../config.js'
 
 export async function register(_parent, args, _ctx) {
@@ -21,7 +21,10 @@ export async function register(_parent, args, _ctx) {
 export async function login(_parent, args, _ctx) {
     const { email, password } = args
     const { id: userId } = await User.login(email, password)
-    const passwordObj = await Password.findOne({ user: userId })
+    const passwordObj = await Password.findOne({ userId: userId })
+
+    console.error("passwordObj", passwordObj) // = await Password.findOne({ userId: userId })
+
     const userKey = await Password.decrypt(passwordObj, password)
 
     const { id: sessionId } = await Session.create(userId, userKey)

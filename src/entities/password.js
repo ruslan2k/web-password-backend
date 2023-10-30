@@ -1,20 +1,23 @@
 import { DataTypes } from 'sequelize'
 
 import { sequelize } from "../modules/db/sql.js"
+import { User } from "./user.js"
 
-export const User = sequelize.define('User', {
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+export const Password = sequelize.define('Password', {
     salt: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    passwordHash: {
+    iv: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    encryptedKey: {
         type: DataTypes.STRING,
         allowNull: false
     }
 }, {
     // Other model options go here
 });
+
+Password.User = Password.belongsTo(User);
