@@ -1,9 +1,12 @@
 import { DataTypes } from 'sequelize'
 
 import { sequelize } from "../modules/db/sql.js"
-import { User } from "./user.js"
 
 export const Password = sequelize.define('Password', {
+    userId: {
+        type: DataTypes.NUMBER,
+        allowNull: false
+    },
     salt: {
         type: DataTypes.STRING,
         allowNull: false
@@ -19,5 +22,3 @@ export const Password = sequelize.define('Password', {
 }, {
     // Other model options go here
 });
-
-Password.User = Password.belongsTo(User);

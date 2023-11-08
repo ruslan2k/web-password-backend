@@ -9,9 +9,9 @@ const scryptP = promisify(scrypt)
 /**
  * @param {Buffer} userKey
  * @param {string} password
- * @param {string} userId
+ * @param {number} userId
  */
-async function create(userKey, password, user) {
+async function create(userKey, password, userId) {
     const iv = randomBytes(16)
     const salt = randomBytes(16)
 
@@ -21,8 +21,7 @@ async function create(userKey, password, user) {
     encryptedKey += cipher.final('base64')
 
     const passwordObj = {
-        // userId,
-        userId: user.id,
+        userId,
         salt: salt.toString('base64'),
         iv: iv.toString('base64'),
         encryptedKey
